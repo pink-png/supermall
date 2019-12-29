@@ -34,6 +34,34 @@ request.js
 7.创建首页home的网络请求
 home.js
 
+8.tabControl 
+列表选中那个就改变状态
+        <div v-for="(item,index) in title"
+         class="tab-control-item" :class="{active:index===currentIndex}" @click="itemClick(index)">
+            <span>{{item}}</span>
+        </div>
+
+        data(){
+        return{
+            currentIndex:0
+        }
+    },
+    methods:{
+        itemClick(index){
+            this.currentIndex = index;
+        }
+    }
+
+9.
+    position: sticky;
+    top: 44px;
+    
+页面滚动到44px的时候，就停止
+当距离top距离头部44px的时候
+就会把position的值改为flexd        
+    
+
+
 
 
 
