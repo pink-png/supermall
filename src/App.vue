@@ -5,7 +5,7 @@
     </keep-alive>
     <main-tab-bar></main-tab-bar>
     <icon></icon>
-    <svg-icon></svg-icon>
+    <svg-icon></svg-icon>  
   </div>
 </template>
 

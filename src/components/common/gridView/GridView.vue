@@ -67,5 +67,6 @@
   .grid-view {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
   }
 </style>

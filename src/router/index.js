@@ -35,6 +35,8 @@ const routes = [
   {
     path: '/detail',
     component: Detail
+    // path: '/detail/:id',  动态路由的方式
+    // component: Detail
   }
 ]
 

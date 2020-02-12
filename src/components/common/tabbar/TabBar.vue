@@ -22,7 +22,7 @@
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: -1px;
 
     /* 利用flex进行布局 */
     display: flex;
