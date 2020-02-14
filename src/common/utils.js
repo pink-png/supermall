@@ -1,7 +1,19 @@
 export function formatDate(date, fmt) {
+  //1.获取年份
+  //y+
+  // + 1个或者多个
+  // * 0个或者多个
+  // ? 0个或者 1个
+  //2019
+  //y - 9
+  //yy - 19
+  //yyy - 019
+  //yyyy - 2019
   if (/(y+)/.test(fmt)) {
     fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
   }
+  //2.获取
+  //M+ 
   let o = {
     'M+': date.getMonth() + 1,
     'd+': date.getDate(),

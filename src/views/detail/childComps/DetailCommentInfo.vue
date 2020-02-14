@@ -19,7 +19,7 @@
           <span>{{commentInfo.style}}</span>
         </div>
         <div class="info-imgs">
-          <img :src="item" v-for="(item, index) in commentInfo.images">
+          <img :src="item" v-for="(item, index) in commentInfo.images" :key="index">
         </div>
       </div>
     </div>
@@ -39,7 +39,7 @@
     filters: {
 		  showDate: function (value) {
         let date = new Date(value*1000);
-        return formatDate(date, 'yyyy-MM-dd')
+        return formatDate(date, 'yyyy-MM-dd hh:mm:ss' )
       }
     }
 	}

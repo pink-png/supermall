@@ -266,24 +266,97 @@ tabcontrol 上面的图片主要分为轮播图的图片和下面 2 个部分的
 正常情况下，当用于切换页面的时候 ，再返回还是当初的模样
 但是,发现，是不行的
 当点击其他路由的时候，
-home首页会调用 销毁destroyed的生命周期钩子函数
+home 首页会调用 销毁 destroyed 的生命周期钩子函数
 
-让home不要随意销毁掉 app.vue设置
+让 home 不要随意销毁掉 app.vue 设置
 `<keep-alive exclude="Detail">`
 `<router-view></router-view>`
 `</keep-alive>`
 
 但是怎么保持原来的位置呢？
-离开时，保存一个位置信息savey
-进来时，将位置设置为原来保存的位置信息savey即可
-
+离开时，保存一个位置信息 savey
+进来时，将位置设置为原来保存的位置信息 savey 即可
 
 **点击商品跳转到详情页**
 新建一个 view -> detail 来存放这个详情页视图的编写
 
 配置一个路由
 然后后给每一个图片设置一个点击跳转路由的点击事件
-路由传递参数
-1.动态路由
-2.query的方式
- `this.$router.push({path: '/detail', query: {iid}})`
+路由传递参数 1.动态路由
+2.query 的方式
+`this.$router.push({path: '/detail', query: {iid}})`
+
+_轮播组件 DetailSwiper_
+在 detail create 生命周期发送网路请求接受到的数据采用父传子的方式传给 DetailSwiper 组件
+采用循环的方式把图片传给当前的组件
+引入 swiper 组件 展示图片
+设置好 css 样式
+
+但是出了一个 bug 就是 点击首页中的商品图片跳转到详情页都是第一张图片
+因为之前为了保存离开首页的进度 采用 keep-alive 给 router-view 保存了
+当点击图片后，内部都不会再更新了
+那怎么才能让 detail 这个组件不使用 keep-alive 呢？
+就需要使用
+`<keep-alive exclude="Detail">`
+`<router-view></router-view>`
+`</keep-alive>`
+exclide 这个属性了
+
+_商品基本信息的展示 DetailBaseInfo_
+这里需要注意的是：
+从 detail 拿到的数据不要一个一个传 把数据整合成一个对象
+什么意思呢？
+类似于
+class Person{
+costructor(name,age){
+this.name=name;
+this.age=age;
+}
+}
+const p = new Person('name',1000);
+
+在 network -> detail.js 请求的 detail 数据中 采用构造类的方法
+保存一个对象，这个对象里面保存请求下来的数据
+
+`<div v-if="Object.keys(goods).length !== 0" class="base-info">`
+这段代码的含义是 查看传过来的 goods 对象是否为空 空的话就不展示
+
+_商家信息的展示 DetailShopInfo_
+采用跟商品基本信息一样的做法
+
+_详情页的滚动采用 better-scroll_
+这里注意 content 需要设置高度
+
+_穿着效果图片的展示 DetailGoodInfo_
+这里如果直接加载来图片 每一张图片都会影响高度的计算
+这里进行一层判断
+`methods: {`
+`imgLoad() {`
+`if (++this.counter === this.imagesLength) {`
+`this.$emit("imageLoad");`
+`}`
+`}`
+`},`
+`watch: {`
+`detailInfo() {`
+`this.imagesLength = this.detailInfo.datailImage[0].list.length;`
+`}`
+`}`
+定义一个 counter 计数器来计数图片的数量 当 counter 等于所有图片数量等于的时候，说明已经全部加载了，
+再 emit 出一个事件
+注意,刷新调用 scroll 组件
+`this.$refs.scroll.refresh()`
+
+_商品参数的展示 DetailparmInfo_
+采用构造函数的对象的方式来存放数据
+
+_商品评论 derailCommentInfo_
+只要是服务器返回的是时间
+不会是以 xxxx-y-zz aa:bb:cc 这种格式的
+是一串数字或者是其它的 一串时间戳 比如153567434(毫秒)
+怎么将时间戳格式化时间格式化字符串
+1.将时间戳转成Date对象
+const data = new Date(153567434*1000)
+2.将data进行格式化，转成对应的字符串
+
+封装一个事件格式化的方法 common -> utils
