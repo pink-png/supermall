@@ -1,5 +1,4 @@
-1.
-项目文件夹分类
+**项目文件夹分类**
 assets 资源文件夹
 common 公共的 js 文件
 commponents 下的 common 是复用的组件 content 是本次项目的业务组件
@@ -7,20 +6,18 @@ network 网络请求
 store vuex 状态管理
 view 视图文件
 
-2.
-css 文件的引用
+**css 文件的引用**
 assets -> css -> normalize.css(初始化 css)
 assets -> css -> base.css(自己的 css) 将 normalize 引入到 base.css( @import "./normalize.css")
 将 base.css 引入到 App.vue( @import "assets/css/base.css" )
 最后项目打包的时候是 main.js 主函数 找到 APP.vue 最后找到引入的 base.css
 base.css 使用了 :root 获取根元素 html 定义 css 变量
 
-3.
+**webpack 配置**
 上传到 git 的时候,没有把 node 的包传上去，但是下载回来的时候
 需要运行 npm install 会把 package-lock.json 的配置下载回来
 
-4.
-vue-cli 3.x 里面看不到配置文件
+**vue-cli 3.x 里面看不到配置文件**
 自己创建 vue.config.js 配置自己的 webpack 配置 最后和公共的 webpack 会合并的
 自己配置的动态路径 就不需要写类似于 ../../ 这种恶心的写法了
 `module.exports = {`
@@ -40,41 +37,40 @@ vue-cli 3.x 里面看不到配置文件
 使用 vue-cli 2.x 默认生成 editorconfig 目的是为了给代码做统一风格
 vue-cli 3.x 可以自己创建这个文件来配置自己的代码做统一风格
 
-5.
-整个项目的骨架 tabbar
+**整个项目的骨架 tabbar**
 可复用组件 components -> common -> tabbar 根据项目需求在 content 里面封装 mainTabbar 组件 在 APP.vue 引入
 创建路由 index.js 配置 tabbar 和路由的关系
 `mode:history` history 模式的使用
 路由懒加载的使用 => 为给客户更好的客户体验，首屏组件加载速度更快一些，解决白屏问题
 
-6.
-icon 图标的引入
+**icon 图标的引入**
 public -> index.html (`<link rel="icon" href="<%= BASE_URL %>logo.png">`)
 这是 jsp 的语法,为什么能被运行?
-因为,最后这个 index.html 文件会被打包到 dist 文件夹下，不会存在这个语法了
+因为,最后这个 index.html 文件会被打包到 dist 文件夹下,不存在这段语法了
 
----
-
-7.
-首页的开发
-
+**首页的开发**
+为了体现组件化封装的思想，在 view -> home -> 创建 childComps 文件用于存放首页 home 的功能模块
 注意资源文件的引入需要在前面加 ~ 符号
-首页 navbar 是可复用组件 预留三个具名插槽 每一个插槽外面包一个 div 使用 flex 布局设置样式
 
-网络请求的封装 network -> axios.js
+_navbar 组件的封装和使用_
+navbar 是可复用组件 components -> common -> navbar 一个插槽外面包一个 div 使用 flex 布局设置样式 预留三个具名插槽
+
+_网络请求的封装 network -> axios.js_
 需要使用到 axios
-安装 axios 指令 npm install axios --save
+安装 axios 指令 npm install axios --save(运行时依赖)
 
+_封装首页网络请求的 js 文件_
 首页请求的网络封装 network -> home.js 只需要面向 axios.js 这个请求方法就可以了
 
+_发送网络请求拿到轮播图图片并村存放在首页 home 中_
 当 home.vue 组件已经创建好的时候就发送网络请求 在 created 生命周期里请求 请求到的数据需要保存在 data 中
 在 data 中定义 banners 和 recommend 2 个空的数组 存放各自请求得到的数据
 
-轮播图组件的封装(也可以使用 swiper 插件) 可复用组件 components -> common -> swiper
+_轮播图组件的封装(也可以使用 swiper 插件)_
+可复用组件 components -> common -> swiper
 swiper 作为轮播整体框架，swiperItem 作为每一个需要轮播的图,将首页 home 请求到的 banners 作为长度，循环创建需要轮播的图片张数个数的 swiperItem
 
-为了体现组件化封装的思想，在 view -> home -> 创建 childComps 文件用于存放首页 home 的功能模块
-
+_tabControl 的封装_
 业务公共组件 components -> content -> tabControl(流行，新款，精选)
 直接传文字(流行，新款，精选) 给子组件 用于显示
 
@@ -94,7 +90,7 @@ swiper 作为轮播整体框架，swiperItem 作为每一个需要轮播的图,�
 `}`
 `}`
 
-商品列表的展示
+_商品列表的展示_
 设计数据保存的模型
 变量 goods 保存着:(流行，新款，精选这三个数组)
 page:页码
@@ -114,12 +110,10 @@ list:保存的数据数
 点击 TabControl 切换(流行，新款，精选)
 给这个三个 tab 设置事件点击监听 但是当前只是在当前组件内的点击 ,跟外面是无关的
 所以 要使用\$emit('function' , var)自定义事件方法来传递数据 传出的是什么呢？
-是当前(流行，新款，精选)div 的序列 index 分别是 0 ，1 ，2
+当前(流行，新款，精选)div 的序列 index 分别是 0 ，1 ，2
 首页接收到的 idnex 序列 采用 switch 语法 来切换 显示的数据是 pop ， new 还是 sell
 
-**以上 整个首页 大致的样子就差不多完成**
-
-接下来考虑的是 滚动方面的
+_接下来考虑的是 滚动方面的_
 当项目部署到服务器上的时候，采用原生的滚动在移动端会非常的卡顿
 早期解决这个问题  
 采用 iscroll 来解决 但是由于年代久远 作者不跟新维护了，所以不采用
@@ -127,24 +121,25 @@ list:保存的数据数
 
 better-scroll 是基于原生 js 实现的，不依赖任何框架 是非常好的选择
 
-安装 npm install better-scroll --save(依赖)
+安装 npm install better-scroll --save(运行时依赖)
 
 对于整个首页来说 ,底部 tabbar 和顶部的 navbar 是不需要使用 better-scroll 对象来监听滚动的
-对于这个 better-scroll 整个插件来说 整个项目里不只使用了一次
+对于这个 better-scroll 整个插件来说 整个项目里不止使用了一次
 对于这个插件的维护性来说，某一天出了 bug 或者作者不维护了
 所以 还是采用封装一个 scroll 组件 里面定义插槽的方式来使用这个插件
-components -> common -> scroll 属于可复用组价
+components -> common -> scroll 属于可复用组件
 
 其实对于 vue better-scroll 正好非常的合适
 因为 better 外层需要包装一个 wrapper 的一个 div 就相当于 scroll 组件
 里面的内容就是 scroll 插槽 的内容 content
 
-封装 scroll 组件
+_封装 scroll 组件_
 创建的 better 对象传入的对象 采取 ref 的方式来获取 如果用原生的方式可能有冲突 指不定拿到的是哪一个的，类名获取。是先拿到的是第一个元素对象
-ref 如果是绑定在组件中的，那么通过**this.\$refs.refname** 获取到组件对象
-ref 如果是绑定在普通元素中的，那么通过**this.\$refs.refname** 获取到元素对象
+ref 如果是绑定在组件中的，那么通过`this.$refs.refname` 获取到组件对象
+ref 如果是绑定在普通元素中的，那么通过`this.$refs.refname`获取到元素对象
 
-**考虑到业务中的上拉下拉获取或者监听的异同,里面的事件全部采用自定义事件的方式** home 组件或者是其他需要使用到 scroll 组件对其传值的方式来操作 scroll 组件
+考虑到业务中的上拉下拉获取或者监听的异同,里面的事件全部采用自定义事件的方式
+home 首页或者是其他需要使用到 scroll 组件对其传值的方式来操作 scroll 组件
 
 那么 content 的大小(需要滚动部分的大小)该怎么设置呢？
 这里我采用
@@ -162,7 +157,7 @@ tabber 高度是 49px
 
 这样就不需要设置宽高了 ，大小有内容来撑起
 
-backTop 的封装
+_backTop 的封装和使用_
 公共共业务组件 components -> content -> backTop
 点击回到顶部的
 也采用插槽的方式 插槽里面为点击回到顶部的图片
@@ -174,43 +169,45 @@ backTop 的封装
 最原始的思路就是 backtop 组件自定义事件往 home 组件发送 , 然后 home 组件接受到了 backtop 组件发来的事件,
 然后在 home 组件里面拿到 scroll 组件 就是那个 ref 是 scroll 的组件 ，然后 `this.$refs.scroll.scrollTo(0, 0, 300)`
 
-其实这样还不是太麻烦就这么干吧
-
-**其实有一个更简单的办法** 就是直接在 home 组件里面 直接监听 backtop 的事件
+_其实有一个更简单的办法_
+就是直接在 home 组件里面 直接监听 backtop 的事件
 但是组件能不能直接监听事件呢?
 是不行的，需要使用到 vue.js 一个 .native 的一个指令
 实现监听的方式可以改为 `<back-top @click.native="backClick"/>`
 然后 直接就是在 backClick 里面拿到 scroll 组件 然后 `this.$refs.scroll.scrollTo(0, 0, 300)`
 
-这里补充一下关于 **better-scroll 对象的点击事件**
+_这里补充一下关于 better-scroll 对象的点击事件_
 如果是点击 div 的话 ,是要给 scroll 对象加上 click:true 的
 
-**上拉加载更多的编写**
-使用 better-scroll 在普通的上啦中是一点问题都没有的
-但是 上啦加载请求数据就会出现 明明有数据加载过来 但是 不能够上啦的 bug
+_上拉加载更多_
+使用 better-scroll 在普通的上拉下滑是一点问题都没有的
+但是 上啦加载请求数据就会出现 明明有数据加载过来 但是 不能够向上滑动的 bug
 
-首先在普通的上啦下拉的时候，content 的高度是固定的，里面的内容也是固定的  
+首先在普通的上拉下拉的时候，content 的高度是固定的，里面的内容也是固定的  
 所以在内部可以滚动的距离就是里面内容的高度减去 content 的高度
 
-但是在上啦加载更多数据的时候,  
+但是在上拉加载更多数据的时候,  
 better-scroll 在决定有多少区域可以滚动时,是根据 scrollHeight 属性决定的
 scrollHeight 属性是根据 better-scroll 的 content 中的子组件的高度
 但是在我们首页中,刚开始在计算 scrollHeight 属性时，是没有将图片计算在内的
 所以计算出来的高度是错误的
 后来图片加载进来之后有了新的高度，但是 scrollHeight 的属性时不会更新的
+
 _怎么解决这个问题？_
 监听每一张图片是否加载完成，只要有一张图片加载完成，执行一次 refresh()
+
 _怎么监听图片加载完成了呢？_
 在 dom 中有 img.onload=functon(){}
 但是在 vue 里面不需要这个，有一个指令 @load="方法"
 但是使用这个方法的话 就相当于在 GoodListItem 中调用 this.scroll.refresh()
-哈哈哈 这两者根本毫无关系 等于说 scroll 组件传给 home home 传给 GoodList GoodList 传给 GoodListItem
+这两者根本毫无关系 等于说 scroll 组件传给 home home 传给 GoodList GoodList 传给 GoodListItem
 这会相当的麻烦！！！
 
 _这里可以使用 vuex_
 GoodlistItem 关联 vuex vuex 又关联 home 首页
 
-_也可以使用事件总线_ 他和 vuex 很相似 ，但是它不是用来管理状态的，是管理事件的
+_也可以使用事件总线_
+他和 vuex 很相似 ，但是它不是用来管理状态的，是管理事件的
 goodlistitem 使用 this.$bus.emit('aaa',参数)  发送到事件总线
 home首页    使用  this.$bus.on('aaa',回调函数(参数)) 来接收这个事件
 但是默认情况下这个$bus是没有值的
@@ -290,7 +287,7 @@ _轮播组件 DetailSwiper_
 在 detail create 生命周期发送网路请求接受到的数据采用父传子的方式传给 DetailSwiper 组件
 采用循环的方式把图片传给当前的组件
 引入 swiper 组件 展示图片
-设置好 css 样式
+设置 css 样式
 
 但是出了一个 bug 就是 点击首页中的商品图片跳转到详情页都是第一张图片
 因为之前为了保存离开首页的进度 采用 keep-alive 给 router-view 保存了
@@ -305,7 +302,6 @@ exclide 这个属性了
 _商品基本信息的展示 DetailBaseInfo_
 这里需要注意的是：
 从 detail 拿到的数据不要一个一个传 把数据整合成一个对象
-什么意思呢？
 类似于
 class Person{
 costructor(name,age){
@@ -353,10 +349,32 @@ _商品参数的展示 DetailparmInfo_
 _商品评论 derailCommentInfo_
 只要是服务器返回的是时间
 不会是以 xxxx-y-zz aa:bb:cc 这种格式的
-是一串数字或者是其它的 一串时间戳 比如153567434(毫秒)
-怎么将时间戳格式化时间格式化字符串
-1.将时间戳转成Date对象
-const data = new Date(153567434*1000)
-2.将data进行格式化，转成对应的字符串
+是一串数字或者是其它的 一串时间戳 比如 153567434(毫秒)
+怎么将时间戳格式化时间格式化字符串 1.将时间戳转成 Date 对象
+const data = new Date(153567434\*1000) 2.将 data 进行格式化，转成对应的字符串
 
 封装一个事件格式化的方法 common -> utils
+
+_标题和内容的联动效果_
+监听 DetailNavBar 的点击
+发出点击事件
+然后在 detail 中调用 this.\$refs.scroll.scrollTo()
+那其中 y 的值怎么获取呢？
+
+定义一个 themeTops 的一个数组用于存放 y 的值
+其实就是获取上面组件(param comment recommend base)的 offsettop 的值
+那么在哪里获取这个值呢？
+created？ mounted ？ 还是其它的生命周期？
+created 肯定不行，压根不能获取元素
+在 mounted 取值发现,是不准确的，
+因为在这几个组件中做了一层 object.key().length 没有值的时候不渲染页面
+
+这里需要注意 组件拿到数据后，需要时间渲染
+可以在 mounted 生命周期中使用 this.$nextTick(()=>{})来获取准确的值
+但是这个方法会有问题，
+this.$nextTick()
+是根据最新的数据，对应的 DOM 是已经渲染出来的
+但是图片依然是没有加载完(目前获取到的 offsettop 不包含其中的图片
+offsetTop 值不对的时候，都是图片的问题
+
+这个时候就可以在 updated 数据更新后的生命周期里面获取了
