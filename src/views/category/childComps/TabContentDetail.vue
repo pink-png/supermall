@@ -6,7 +6,7 @@
 
 <script>
   import GridView from 'common/gridView/GridView'
-  import GoodsListItem from 'views/home/childComps/GoodsListItem'
+  import GoodsListItem from 'components/content/goods/GoodsListItem'
 
   export default {
     name: "TabContentDetail",

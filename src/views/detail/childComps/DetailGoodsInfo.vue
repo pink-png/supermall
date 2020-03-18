@@ -28,6 +28,7 @@ export default {
   },
   methods: {
     imgLoad() {
+      //当图片计数器counter等于图片数量的时候 发送事件
       if (++this.counter === this.imagesLength) {
         this.$emit("imageLoad");
       }
@@ -35,6 +36,7 @@ export default {
   },
   watch: {
     detailInfo() {
+      //获取图片的数量  避免调用多次
       this.imagesLength = this.detailInfo.detailImage[0].list.length;
     }
   }

@@ -39,8 +39,8 @@ export default {
     },
     // 监听图片有没有完全加载
     imageLoad() {
-      //console.log("--------"); //输出四次  ，因为有4张轮播图片
-      if (!this.isLoad) {
+      //定义一个变量isLoad 默认是false  
+      if (!this.isLoad) { //当isLoad为true的时候发送事件给home首页
         this.$emit("swiperImageLoad")
         this.isLoad = true
       }

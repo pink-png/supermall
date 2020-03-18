@@ -1,6 +1,7 @@
 <template>
   <div id="detail">
     <detail-nav-bar @itemClick="titleClick" :current-index="currentIndex"></detail-nav-bar>
+    <!-- scroll开始 -->
     <scroll
       class="content"
       ref="scroll"
@@ -18,16 +19,18 @@
         <detail-recommend-info ref="recommend" :recommend-list="recommendList"></detail-recommend-info>
       </div>
     </scroll>
+    <!-- scroll结束 -->
     <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
     <back-top @backTop="backTop" class="back-top" v-show="showBackTop">
       <img src="~assets/img/common/top.png" alt />
     </back-top>
+    <!-- <toast :message="message" :show="show"></toast> -->
   </div>
 </template>
 
 <script>
 import Scroll from "common/scroll/Scroll";
-
+// import Toast from "common/toast/toast";
 import DetailNavBar from "./childComps/DetailNavBar";
 import DetailSwiper from "./childComps/DetailSwiper";
 import DetailBaseInfo from "./childComps/DetailBaseInfo";
@@ -36,7 +39,6 @@ import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
 import DetailRecommendInfo from "./childComps/DetailRecommendInfo";
-
 import DetailBottomBar from "./childComps/DetailBottomBar";
 import BackTop from "content/backTop/BackTop";
 
@@ -47,6 +49,7 @@ import {
   Shop,
   GoodsParam
 } from "network/detail";
+import { debounce } from "../../common/utils";
 import { backTopMixin } from "@/common/mixin";
 import { BACKTOP_DISTANCE } from "@/common/const";
 
@@ -63,7 +66,8 @@ export default {
     Scroll,
     DetailNavBar,
     DetailSwiper,
-    BackTop
+    BackTop,
+    // Toast
   },
   mixins: [backTopMixin],
   data() {
@@ -78,27 +82,41 @@ export default {
       recommendList: [],
       themeTops: [],
       currentIndex: 0
+      // message:'',
+      // show:false
     };
   },
   created() {
     this._getDetailData();
     this._getRecommend();
   },
+  mounted() {
+    const refresh = debounce(this.$refs.scroll.refresh, 500);
+
+    this.itemImageListener = () => {
+      refresh();
+    };
+    this.$bus.$on("itemImageLoad", this.itemImageListener);
+  },
+  destroyed() {
+    this.$bus.$off("itemImageLoad", this.itemImageListener);
+  },
   updated() {
     // 获取需要的四个offsetTop
     this._getOffsetTops();
   },
   methods: {
-    imageLoad(){
-      this.$refs.scroll.refresh()
+    imageLoad() {
+      this.$refs.scroll.refresh();
     },
     _getOffsetTops() {
       this.themeTops = [];
-      this.themeTops.push(this.$refs.base.$el.offsetTop);
-      this.themeTops.push(this.$refs.param.$el.offsetTop);
-      this.themeTops.push(this.$refs.comment.$el.offsetTop);
-      this.themeTops.push(this.$refs.recommend.$el.offsetTop);
-      this.themeTops.push(Number.MAX_VALUE);
+      this.themeTops.push(0); //商品
+      this.themeTops.push(this.$refs.param.$el.offsetTop); //参数
+      this.themeTops.push(this.$refs.comment.$el.offsetTop); //评论
+      this.themeTops.push(this.$refs.recommend.$el.offsetTop); //推荐
+      this.themeTops.push(Number.MAX_VALUE); //取一个最大值
+      // console.log(this.themeTops);
     },
     contentScroll(position) {
       // 1.监听backTop的显示
@@ -108,7 +126,9 @@ export default {
       this._listenScrollTheme(-position.y);
     },
     _listenScrollTheme(position) {
+      //获取y的值
       let length = this.themeTops.length;
+
       for (let i = 0; i < length; i++) {
         let iPos = this.themeTops[i];
         /**
@@ -128,6 +148,7 @@ export default {
           if (this.currentIndex !== i) {
             this.currentIndex = i;
           }
+          // console.log(i);
           break;
         }
       }
@@ -137,6 +158,7 @@ export default {
       this.$refs.scroll.scrollTo(0, -this.themeTops[index], 100);
     },
     addToCart() {
+      //获取购物车里需要展示的数据  存在对象里面
       // 1.创建对象
       const obj = {};
       // 2.对象信息
@@ -144,10 +166,20 @@ export default {
       obj.imgURL = this.topImages[0];
       obj.title = this.goods.title;
       obj.desc = this.goods.desc;
-      obj.newPrice = this.goods.nowPrice;
-      // 3.添加到Store中
-      this.$store.commit("addCart", obj);
+      obj.newPrice = this.goods.realPrice;
+      // 3.使用Vuex添加到Store中  添加到购物车中
+      // this.$store.cartList.push(obj);
+
+      //在mutations中调用
+      // this.$store.commit("addCart", obj);
+      //在actions中调用
+      this.$store.dispatch("addCart", obj).then(res =>{
+
+        this.$toast.show(res,2000);
+      })
+
     },
+    //商品信息的网络请求
     _getDetailData() {
       // 1.获取iid
       const iid = this.$route.query.iid;
@@ -158,7 +190,7 @@ export default {
         // 2.1.获取结果
         const data = res.result;
 
-        // 2.2.获取顶部信息
+        // 2.2.获取顶部轮播图信息
         this.topImages = data.itemInfo.topImages;
 
         // 2.3.获取商品信息
@@ -205,9 +237,12 @@ export default {
 }
 
 .content {
+  /* 方法一: */
   position: absolute;
   top: 44px;
   bottom: 60px;
+  /* 方法二： */
+  /* height: calc(100% - 44px); */
 }
 
 .back-top {

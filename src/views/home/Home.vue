@@ -43,9 +43,10 @@ import BackTop from "content/backTop/BackTop";
 import HomeSwiper from "./childComps/HomeSwiper";
 import FeatureView from "./childComps/FeatureView";
 import RecommendView from "./childComps/RecommendView";
-import GoodsList from "./childComps/GoodsList";
+import GoodsList from "components/content/goods/GoodsList";
 import { getHomeMultidata, getHomeData, RECOMMEND, BANNER } from "network/home";
 import { NEW, POP, SELL, BACKTOP_DISTANCE } from "@/common/const";
+import { debounce } from "../../common/utils";
 
 export default {
   name: "Home",
@@ -72,7 +73,8 @@ export default {
       isTabFixed: false,
       tabOffsetTop: 0,
       showBackTop: false,
-      saveY: 0
+      saveY: 0,
+      itemImgListener: null
     };
   },
   computed: {
@@ -89,19 +91,46 @@ export default {
     this.getHomeProducts(NEW);
     this.getHomeProducts(SELL);
   },
+  mounted() {
+    //监听item中的图片加载完成
+    const refresh = debounce(this.$refs.scroll.refresh, 500);
+
+    //对监听的事件进行保存
+    this.itemImgListener = () => {
+      refresh();
+    };
+    this.$bus.$on(
+      "itemImageLoad",
+      // console.log('加载完成啦')
+      //加载完成图片后,调用refresh更新
+      // this.$refs.scroll.refresh();
+      this.itemImgListener
+    );
+  },
   destroyed() {
-    console.log("销毁");
+    // console.log("销毁");
   },
   activated: function() {
-    console.log("进入");
+    // console.log("进入");
     this.$refs.hSwiper.startTimer();
+
+    //获取位置并瞬间跳转到之前离开时候的位置
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+    //然后再刷新这个页面
+    this.$refs.scroll.refresh();
   },
   deactivated: function() {
-    console.log("离开");
+    // console.log("离开");
     this.$refs.hSwiper.stopTimer();
+
+    //记录home首页离开时候的位置
+    this.saveY = -this.$refs.scroll.getScrollY();
+
+    //取消全局事件的监听函数itemImgListener函数
+    this.$bus.$off("itemImageLoad", this.itemImgListener);
   },
   updated() {
-    // this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+    this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
     // console.log(this.tabOffsetTop);
   },
   methods: {
@@ -131,13 +160,14 @@ export default {
       this.showBackTop = position.y < -BACKTOP_DISTANCE;
     },
     loadMore() {
+      //上拉加载更多并且把page传进去
       this.getHomeProducts(this.currentType);
     },
     backTop() {
       this.$refs.scroll.scrollTo(0, 0, 300);
     },
     swiperImageLoad() {
-      // console.log(this.$refs.tabControl.$el.offsetTop);
+      // 当轮播图组件的图片加载完后,发送事件,获取组件tabControl距离顶部的距离
       this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
     },
     /**
@@ -148,9 +178,9 @@ export default {
         this.banners = res.data[BANNER].list;
         this.recommends = res.data[RECOMMEND].list;
         // 下次更新DOM时,获取新的tabOffsetTop值(不保险,可以在updated钩子中获取)
-        this.$nextTick(() => {
-          this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
-        });
+        // this.$nextTick(() => {
+        //   this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
+        // });
       });
     },
     getHomeProducts(type) {
