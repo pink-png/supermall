@@ -66,7 +66,7 @@ export default {
     Scroll,
     DetailNavBar,
     DetailSwiper,
-    BackTop,
+    BackTop
     // Toast
   },
   mixins: [backTopMixin],
@@ -173,11 +173,9 @@ export default {
       //在mutations中调用
       // this.$store.commit("addCart", obj);
       //在actions中调用
-      this.$store.dispatch("addCart", obj).then(res =>{
-
-        this.$toast.show(res,2000);
-      })
-
+      this.$store.dispatch("addCart", obj).then(res => {
+        this.$toast.show(res, 2000);
+      });
     },
     //商品信息的网络请求
     _getDetailData() {

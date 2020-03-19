@@ -474,10 +474,60 @@ offsetTop 值不对的时候，都是图片的问题
   `left: 50%;`
   `transform: translate(-50%,-50%);`
 
-  但是鉴于其他地方可能也需要用到这个toast
+  但是鉴于其他地方可能也需要用到这个 toast
   这里对它进行封装一个插件
+  其实就是封装一个节点
   第一步: components -> common -> toast -> index.js
-  第二步: mian.js里面导入这个js文件
-  第三步:使用Vue.use安装这个插件
+  第二步: mian.js 里面导入这个 js 文件
+  第三步:使用 Vue.use()安装这个插件
+  第四步: 在 index.js 里面进行相关操作
 
-    **减少移动端 300ms 的延迟**
+`import Toast from './toast'`
+`const obj ={`
+`}`
+`obj.install = function(Vue){`
+`//vue是默认传过来的`
+`// console.log(Vue)`
+`// console.log(Toast.$el) //undefined`
+`// document.body.appendChild(Toast.$el)`
+
+`// 正常操做`
+`//1.创件组件构造器`
+`const toastContrustor = Vue.extend(Toast)`
+`//2.new的方式，根据组件构造器 ,可以创建一个组件对象`
+`const toast = new toastContrustor()`
+`//3.将组件对象，手动挂载到某一个元素上`
+`toast.$mount(document.createElement('div'))`
+`//4.toast.$el对应的就是div`
+`document.body.appendChild(toast.$el)`
+`//5.在Vue组件的原型里面添加toast构造器`
+`Vue.prototype.$toast = toast`
+`}`
+`export default obj`
+**减少移动端 300ms 的延迟**
+
+- 移动设备上的浏览器默认会在用户点击屏幕大约延迟 300 毫秒后才会触发点击事件，这是为了检查用户是否在做双击。为了能够立即响应用户的点击事件，才有了 FastClick
+
+  安装 npm install fastclick --save(开发时依赖)
+
+  在 main.js 里面导入并调用 attach 这个方法
+  `// 导入fastclick这个库`
+  `import FastClick from 'fastclick'`
+
+  `//使用fastclick解决300ms的延迟`
+  `FastClick.attach(document.body)`
+  **图片懒加载**
+
+- 图片显示在需要在屏幕上时候再加载
+  需要用到的时候再加载
+
+  安装 npm install vue-lazyload --save
+
+  在 main.js 里面引入这个插件
+  安装 Vue.use()这个插件
+  修改 img.src -> v-lazy
+
+  **css 单位转化插件**
+
+- 安装 npm install postcss-px-to-viewport --save-dev
+  修改 postcss.config.js 这个文件

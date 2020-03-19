@@ -1,6 +1,7 @@
 <template>
   <div id="category">
     <nav-bar class="nav-bar"><div slot="center">商品分类</div></nav-bar>
+
     <div class="content">
       <tab-menu :categories="categories"
                 @selectItem="selectItem"></tab-menu>
@@ -12,8 +13,10 @@
                        @itemClick="tabClick"></tab-control>
           <tab-content-detail :category-detail="showCategoryDetail"></tab-content-detail>
         </div>
-      </scroll>
+      </scroll>    
+
     </div>
+
   </div>
 </template>
 

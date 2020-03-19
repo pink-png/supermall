@@ -24,11 +24,12 @@ export default {
     };
   },
   methods: {
-    show(message, duration) {
-      (this.isShow= true), (this.message = message);
+    show(message = "添加成功", duration = 2000) {
+      // duration = duration || 2000;
+      (this.isShow = true), (this.message = message);
 
       setTimeout(() => {
-        (this.isShow= false), (this.message = "");
+        (this.isShow = false), (this.message = "");
       }, duration);
     }
   }
