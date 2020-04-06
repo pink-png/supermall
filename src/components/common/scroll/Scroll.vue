@@ -1,5 +1,5 @@
 <template>
-  <div ref="wrapper">
+  <div ref="wrapper" class="action">
     <slot></slot>
   </div>
 </template>
@@ -86,4 +86,7 @@ export default {
 </script>
 
 <style scoped>
+.action{
+  touch-action: none;
+}
 </style>

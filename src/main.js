@@ -27,8 +27,17 @@ Vue.use(VueLazyLoad, {
   loading: require('assets/img/common/placeholder.png')
 })
 
+import {
+  Popup,
+  Cell
+} from 'vant'
+Vue.use(Popup)
+Vue.use(Cell)
+
 new Vue({
   render: h => h(App),
   store,
   router
 }).$mount('#app')
+
+

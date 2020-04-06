@@ -47,6 +47,7 @@ export default {
 #cart {
   /* position: relative; */
   height: 100vh;
+  touch-action: none;
 }
 
 .nav-bar {

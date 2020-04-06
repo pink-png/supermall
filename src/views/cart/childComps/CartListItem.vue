@@ -1,4 +1,5 @@
 <template>
+
   <div id="shop-item">
     <div class="item-selector">
       <CheckButton @checkBtnClick="checkedChange" v-model="itemInfo.checked"></CheckButton>
@@ -15,6 +16,8 @@
       </div>
     </div>
   </div>
+
+
 </template>
 
 <script>

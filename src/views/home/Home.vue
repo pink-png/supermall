@@ -90,6 +90,10 @@ export default {
     this.getHomeProducts(POP);
     this.getHomeProducts(NEW);
     this.getHomeProducts(SELL);
+
+    console.log(this.banners);
+    console.log(this.recommends);
+
   },
   mounted() {
     //监听item中的图片加载完成

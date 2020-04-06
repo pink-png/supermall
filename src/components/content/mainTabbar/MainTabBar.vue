@@ -1,5 +1,5 @@
 <template>
-  <tab-bar>
+  <tab-bar class="action">
     <tab-bar-item link="/home">
       <img slot="icon" src="~assets/img/tabbar/home.svg" alt="">
       <img slot="active-icon" src="~assets/img/tabbar/home_active.svg" alt="">
@@ -36,5 +36,7 @@
   </script>
 
 <style scoped>
-
+.action{
+  touch-action: none;
+}
 </style>

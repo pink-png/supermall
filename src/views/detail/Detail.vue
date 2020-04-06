@@ -25,6 +25,7 @@
       <img src="~assets/img/common/top.png" alt />
     </back-top>
     <!-- <toast :message="message" :show="show"></toast> -->
+    <van-popup v-model="show" position="bottom" :style="{ height: '40%' }">内容</van-popup>
   </div>
 </template>
 
@@ -81,7 +82,8 @@ export default {
       commentInfo: {},
       recommendList: [],
       themeTops: [],
-      currentIndex: 0
+      currentIndex: 0,
+      show: false
       // message:'',
       // show:false
     };
@@ -176,6 +178,8 @@ export default {
       this.$store.dispatch("addCart", obj).then(res => {
         this.$toast.show(res, 2000);
       });
+
+      this.show = true;
     },
     //商品信息的网络请求
     _getDetailData() {
